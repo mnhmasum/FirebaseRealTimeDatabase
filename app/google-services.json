@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "732578670893",
+    "firebase_url": "https://tota-pakhi-797ea.firebaseio.com",
+    "project_id": "tota-pakhi-797ea",
+    "storage_bucket": "tota-pakhi-797ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732578670893:android:9f00542839945fed",
+        "android_client_info": {
+          "package_name": "com.masum.bird"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732578670893-3evm6nutf0l3bhnqhh1s5suo6vf2mqol.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-PiVWG4APj7LgsIsN8_h5FugwyphLucw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
