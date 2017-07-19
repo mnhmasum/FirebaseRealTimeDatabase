@@ -1,13 +1,12 @@
 package com.masum.bird;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -30,16 +28,16 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String ARTIST_NAME = "net.simplifiedcoding.firebasedatabaseexample.artistname";
-    public static final String ARTIST_ID = "net.simplifiedcoding.firebasedatabaseexample.artistid";
+    public static final String WORD_NAME = "word_name";
+    public static final String WORD_ID = "word_id";
 
     EditText editTextName;
-    Spinner spinnerGenre;
+    EditText editTextMeaning;
     Button buttonAddArtist;
     ListView listViewArtists;
 
     //a list to store all the artist from firebase database
-    List<Artist> artists;
+    List<Word> words;
 
     //our database reference object
     DatabaseReference databaseArtists;
@@ -49,27 +47,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //getting the reference of artists node
+        //getting the reference of words node
         databaseArtists = FirebaseDatabase.getInstance().getReference("words");
 
         //getting views
         editTextName = (EditText) findViewById(R.id.editTextName);
-        spinnerGenre = (Spinner) findViewById(R.id.spinnerGenres);
+        editTextMeaning = (EditText) findViewById(R.id.editTextMeaning);
         listViewArtists = (ListView) findViewById(R.id.listViewArtists);
 
         buttonAddArtist = (Button) findViewById(R.id.buttonAddArtist);
 
-        //list to store artists
-        artists = new ArrayList<>();
+        //list to store words
+        words = new ArrayList<>();
 
 
-        //adding an onclicklistener to button
         buttonAddArtist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //calling the method addArtist()
-                //the method is defined below
-                //this method is actually performing the write operation
                 addArtist();
             }
         });
@@ -78,17 +72,10 @@ public class MainActivity extends AppCompatActivity {
         listViewArtists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //getting the selected artist
-                Artist artist = artists.get(i);
-
-                //creating an intent
+                Word artist = words.get(i);
                 Intent intent = new Intent(getApplicationContext(), ArtistActivity.class);
-
-                //putting artist name and id to intent
-                intent.putExtra(ARTIST_ID, artist.getArtistId());
-                intent.putExtra(ARTIST_NAME, artist.getArtistName());
-
-                //starting the activity with intent
+                intent.putExtra(WORD_ID, artist.getWordId());
+                intent.putExtra(WORD_NAME, artist.getWordEnglish());
                 startActivity(intent);
             }
         });
@@ -96,13 +83,12 @@ public class MainActivity extends AppCompatActivity {
         listViewArtists.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Artist artist = artists.get(i);
-                showUpdateDeleteDialog(artist.getArtistId(), artist.getArtistName());
+                Word artist = words.get(i);
+                showUpdateDeleteDialog(artist.getWordId(), artist.getWordEnglish());
                 return true;
             }
         });
 
-        TextView textView = (TextView) findViewById(R.id.textView);
         EditText editTextSearch = (EditText) findViewById(R.id.editTextSearch);
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -112,32 +98,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.e("Search", "onClick: Search " );
-                //Query query = databaseArtists.orderByChild("artistGenre").equalTo(s.toString());
-                //Query query = databaseArtists.orderByChild("artistGenre").startAt("[a-zA-Z0-9]*").endAt(s.toString());
 
-                Query query = databaseArtists.orderByChild("artistGenre")
+                Query query = databaseArtists.orderByChild("wordEnglish")
                         .startAt(s.toString())
-                        .endAt(s.toString());
-
+                        .endAt(s + "\uf8ff");
 
                 query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        artists.clear();
-                        Log.e("Search event", "Get data firrd" );
+                        words.clear();
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            //getting artist
-                            Artist artist = postSnapshot.getValue(Artist.class);
-                            //adding artist to the list
-                            artists.add(artist);
+                            Word artist = postSnapshot.getValue(Word.class);
+                            words.add(artist);
 
-                            Log.i("Result", "Get data firrd"  +  artist.getArtistGenre());
                         }
 
-                        //creating adapter
-                        ArtistList artistAdapter = new ArtistList(MainActivity.this, artists);
-                        //attaching adapter to the list view
+                        WordList artistAdapter = new WordList(MainActivity.this, words);
                         listViewArtists.setAdapter(artistAdapter);
 
                     }
@@ -153,49 +129,8 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 
 
-
             }
         });
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("Search", "onClick: Search " );
-                Query query = databaseArtists.orderByChild("artistGenre").equalTo("Jazz");
-
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        artists.clear();
-                        Log.e("Search event", "Get data firrd" );
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            //getting artist
-                            Artist artist = postSnapshot.getValue(Artist.class);
-                            //adding artist to the list
-                            artists.add(artist);
-
-                            Log.i("Result", "Get data firrd"  +  artist.getArtistGenre());
-                        }
-
-                        //creating adapter
-                        ArtistList artistAdapter = new ArtistList(MainActivity.this, artists);
-                        //attaching adapter to the list view
-                        listViewArtists.setAdapter(artistAdapter);
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-        });
-
-
-        /**/
-
 
     }
 
@@ -237,18 +172,20 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean updateArtist(String id, String name, String genre) {
         //getting the specified artist reference
-        DatabaseReference dR = FirebaseDatabase.getInstance().getReference("artists").child(id);
+        DatabaseReference dR = FirebaseDatabase.getInstance().getReference("words").child(id);
 
         //updating artist
-        Artist artist = new Artist(id, name, genre);
-        dR.setValue(artist);
-        Toast.makeText(getApplicationContext(), "Artist Updated", Toast.LENGTH_LONG).show();
+        Word word = new Word();
+        word.setWordId(id);
+        word.setWordEnglish(name);
+        word.setWordMeaning(genre);
+        dR.setValue(word);
+        Toast.makeText(getApplicationContext(), "Word has been Updated", Toast.LENGTH_LONG).show();
         return true;
     }
 
     private boolean deleteArtist(String id) {
-        //getting the specified artist reference
-        DatabaseReference dR = FirebaseDatabase.getInstance().getReference("artists").child(id);
+        DatabaseReference dR = FirebaseDatabase.getInstance().getReference("words").child(id);
 
         //removing artist
         dR.removeValue();
@@ -272,18 +209,18 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 //clearing the previous artist list
-                artists.clear();
+                words.clear();
 
                 //iterating through all the nodes
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     //getting artist
-                    Artist artist = postSnapshot.getValue(Artist.class);
+                    Word word = postSnapshot.getValue(Word.class);
                     //adding artist to the list
-                    artists.add(artist);
+                    words.add(word);
                 }
 
                 //creating adapter
-                ArtistList artistAdapter = new ArtistList(MainActivity.this, artists);
+                WordList artistAdapter = new WordList(MainActivity.this, words);
                 //attaching adapter to the list view
                 listViewArtists.setAdapter(artistAdapter);
             }
@@ -297,15 +234,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    /*
-    * This method is saving a new artist to the
-    * Firebase Realtime Database
-    * */
     private void addArtist() {
         //getting the values to save
         String name = editTextName.getText().toString().trim();
-        String genre = spinnerGenre.getSelectedItem().toString();
+        String meaning = editTextMeaning.getText().toString();
 
         //checking if the value is provided
         if (!TextUtils.isEmpty(name)) {
@@ -314,25 +246,19 @@ public class MainActivity extends AppCompatActivity {
             //it will create a unique id and we will use it as the Primary Key for our Artist
             String id = databaseArtists.push().getKey();
 
-            //creating an Artist Object
-            Artist artist = new Artist(id, name, genre);
-
             Word word = new Word();
-            word.setWordEnglish("Infer");
-            word.setWordMeaning("Imagine");
+            word.setWordEnglish(name.toLowerCase());
+            word.setWordMeaning(meaning.toLowerCase());
             word.setWordId(id);
 
             //Saving the Artist
             databaseArtists.child(id).setValue(word);
-            databaseArtists.child(id).setValue(artist);
 
-            //setting edittext to blank again
             editTextName.setText("");
+            editTextMeaning.setText("");
 
-            //displaying a success toast
-            Toast.makeText(this, "Artist added", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "New word is added", Toast.LENGTH_LONG).show();
         } else {
-            //if the value is not given displaying a toast
             Toast.makeText(this, "Please enter a name", Toast.LENGTH_LONG).show();
         }
     }

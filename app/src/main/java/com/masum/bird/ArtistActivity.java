@@ -46,7 +46,7 @@ public class ArtistActivity extends AppCompatActivity {
         * but inside the node track we are creating a new child with the artist id
         * and inside that node we will store all the tracks with unique ids
         * */
-        databaseTracks = FirebaseDatabase.getInstance().getReference("tracks").child(intent.getStringExtra(MainActivity.ARTIST_ID));
+        databaseTracks = FirebaseDatabase.getInstance().getReference("tracks").child(intent.getStringExtra(MainActivity.WORD_ID));
 
         buttonAddTrack = (Button) findViewById(R.id.buttonAddTrack);
         editTextTrackName = (EditText) findViewById(R.id.editTextName);
@@ -57,7 +57,7 @@ public class ArtistActivity extends AppCompatActivity {
 
         tracks = new ArrayList<>();
 
-        textViewArtist.setText(intent.getStringExtra(MainActivity.ARTIST_NAME));
+        textViewArtist.setText(intent.getStringExtra(MainActivity.WORD_NAME));
 
         seekBarRating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

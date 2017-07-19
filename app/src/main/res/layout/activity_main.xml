@@ -17,44 +17,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editTextSearch"
-        android:hint="Enter name" />
+        android:hint="Word" />
 
-    <Spinner
-        android:id="@+id/spinnerGenres"
+    <EditText
+        android:id="@+id/editTextMeaning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTextName"
-        android:entries="@array/genres"></Spinner>
+        android:hint="Meaning" />
+
 
     <Button
         android:id="@+id/buttonAddArtist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinnerGenres"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/editTextMeaning"
         android:text="Add" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/buttonAddArtist"
-        android:text="Artists"
-        android:textAlignment="center"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textView"
-        android:text="Tap on an Artist to add and view tracks"
-        android:textAlignment="center" />
 
     <ListView
         android:id="@+id/listViewArtists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"></ListView>
+
+        android:layout_below="@+id/buttonAddArtist"></ListView>
 
 
 </RelativeLayout>
