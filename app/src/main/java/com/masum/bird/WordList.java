@@ -33,7 +33,7 @@ public class WordList extends ArrayAdapter<Word> {
         TextView textViewGenre = (TextView) listViewItem.findViewById(R.id.textViewGenre);
 
         Word artist = artists.get(position);
-        textViewName.setText(artist.getWordEnglish().toUpperCase());
+        textViewName.setText(artist.getWordEnglish().toUpperCase() + "--" + artist.getTitmeStamp());
         textViewGenre.setText(artist.getWordMeaning());
 
         return listViewItem;

@@ -1,6 +1,11 @@
 package com.masum.bird;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.ServerValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Belal on 2/26/2017.
@@ -34,6 +39,29 @@ public class Word {
     private String wordId;
     private String wordEnglish;
     private String wordMeaning;
+
+    public void setTimeStamp(Map<String, String> time) {
+   /*     HashMap<String, Object> timestampNow = new HashMap<>();
+        timestampNow.put("timestamp", ServerValue.TIMESTAMP);*/
+        this.timeStampCreated = time;
+    }
+
+    public Object getTimeStampCreated(){
+        return timeStampCreated;
+    }
+
+    public long getTitmeStamp(){
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp){
+        this.timeStamp = timeStamp;
+    }
+
+
+    Map<String, String> timeStampCreated;
+    Map<String, Long> timeStampCreated1;
+    long timeStamp;
 
 
 }

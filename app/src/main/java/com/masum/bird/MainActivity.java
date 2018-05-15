@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,10 +22,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -207,16 +211,48 @@ public class MainActivity extends AppCompatActivity {
         databaseArtists.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                //clearing the previous artist list
                 words.clear();
+                //clearing the previous artist list
+                Map<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
+
+
+
+                if (td !=null) {
+                    Log.d("allkeys", "onDataChange: " + td.values());
+                }
+
+                for (Object x : td.values()) {
+
+                    if (x instanceof Map) {
+                        Word word = new Word();
+                        word.setWordId(((Map) x).get("wordId").toString());
+                        word.setTimeStamp((long) ((Map) x).get("timeStampCreated"));
+                        word.setWordEnglish(((Map) x).get("wordEnglish").toString());
+                        word.setWordMeaning(((Map) x).get("wordMeaning").toString());
+                        words.add(word);
+                    }
+
+
+
+                }
+
+                for (int i = 0; i < td.size(); i++) {
+
+                }
+
+
+
+
+
 
                 //iterating through all the nodes
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     //getting artist
-                    Word word = postSnapshot.getValue(Word.class);
+                    /*Word word = postSnapshot.getValue(Word.class);
+
+                    //Log.d("time", "onDataChange: " + postSnapshot.getChildren());
                     //adding artist to the list
-                    words.add(word);
+                    words.add(word);*/
                 }
 
                 //creating adapter
@@ -249,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
             Word word = new Word();
             word.setWordEnglish(name.toLowerCase());
             word.setWordMeaning(meaning.toLowerCase());
+            word.setTimeStamp(ServerValue.TIMESTAMP);
             word.setWordId(id);
 
             //Saving the Artist
