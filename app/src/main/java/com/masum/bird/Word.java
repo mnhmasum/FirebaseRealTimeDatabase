@@ -12,6 +12,12 @@ import java.util.Map;
  */
 @IgnoreExtraProperties
 public class Word {
+    private String wordId;
+    private String wordEnglish;
+    private String wordMeaning;
+    private Map<String, String> timeStampCreated;
+    private long timeStamp;
+
     public String getWordId() {
         return wordId;
     }
@@ -36,13 +42,7 @@ public class Word {
         this.wordMeaning = wordMeaning;
     }
 
-    private String wordId;
-    private String wordEnglish;
-    private String wordMeaning;
-
     public void setTimeStamp(Map<String, String> time) {
-   /*     HashMap<String, Object> timestampNow = new HashMap<>();
-        timestampNow.put("timestamp", ServerValue.TIMESTAMP);*/
         this.timeStampCreated = time;
     }
 
@@ -57,11 +57,5 @@ public class Word {
     public void setTimeStamp(long timeStamp){
         this.timeStamp = timeStamp;
     }
-
-
-    Map<String, String> timeStampCreated;
-    Map<String, Long> timeStampCreated1;
-    long timeStamp;
-
 
 }
